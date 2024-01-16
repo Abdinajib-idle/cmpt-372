@@ -1,0 +1,86 @@
+Overview
+In this assignment, you will create a front-end app and install it on an IIS server. We will begin by creating a simple recipe app using Angular, React, or any frontend framework you choose. Then, we'll create a compute engine server on GCP to install our application.
+
+ 
+
+Application
+Create a recipe application using a front-end framework of your choice. The root component of the application should contain two subcomponents:
+
+Subcomponent that contains a form to add new recipes.
+
+Another subcomponent contains a list of created recipes and links to retrieve the saved recipes. When the user clicks on a saved recipe, the app will display the saved recipe on a pop-up window or navigate to a route that contains the recipe.
+
+They can be found on the same page or different routes (i.e. different 'tabs').
+
+ 
+
+Technical requirements:
+
+The data will be stored on localStorage and will be retrieved accordingly.  You are free to use any packages or libraries that you'd like. Your application may look something like this (but other workflows and design are also acceptable and encouraged - please be creative!):
+
+//images missing here
+
+You should build your project into a folder name of your choice. 
+
+ 
+
+Server
+This part of the assignment aims to create a Windows Server 2022 virtual machine on the Google Cloud, install IIS, and set up and test your JavaScript file.
+
+ 
+
+Log into the Google Cloud Platform Console
+
+Go to https://console.cloud.google.com/ Links to an external site.
+
+Log in and click on Go to Console.
+
+Please create a new project and name it [your_firstname_lastname][student_number]—for example, bobbychan30025555.
+
+ 
+
+Create and Connect to a New Virtual Machine Instance
+
+Look at the How-to-Guides (httLinks to an external site.ps://cloud.google.com/compute/docs/how-toLinks to an external site.) on Creating VM instances and Connecting to Instances.
+
+Create a new virtual machine called win-iis-asn1 on Compute Engine with the following characteristics (take a look at the estimated cost):
+
+1-2 vCPUs (4-8 GB memory)  
+Windows Server 2022 DataCenter
+Use a new 50GB standard persistent disk
+Allow HTTP traffic
+Connect to your instance using Remote Desktop Protocol (RDP). You will need to use an RDP client (including Windows Remote Desktop Connection, available on Windows and MacOSX), click the RDP button's overflow menu and download the RDP file. Open the RDP file with your client.
+ 
+
+Running and Connecting to IIS on your Virtual Machine
+
+Click on Add Roles and Features under the Server Manager Window. Under Server Roles, ensure Web Server (IIS) is selected for installation.
+
+In your Server Manager, click on Tools ⇒ Internet Information Services (IIS) Manager. This should bring up our familiar web server manager.
+
+Ensure the default page is running by going to your external IP (i.e. http://35.229.117.56). Please note the "http" and not "https"
+
+Set up Your Own Pages:
+
+Look at the How-to-Guides (httLinks to an external site.ps://cloud.google.com/compute/docs/instances/transfer-files-windowsLinks to an external site.) under Transferring Files to Instances. Transfer the HTML and JavaScript files you created in the previous section to your server into the default folder (found in C:\inetpub\wwwroot\). You should be able to see your file under http://[your_external_IP]/[your_html_file].html. For example,
+http://35.229.117.56/recipes_app.html
+
+ 
+
+Shutting Down Your Virtual Machine
+
+In your VM Instances page on GCP, click on the three vertical dots on the right side of your machine and select STOP. Make sure that the icon on the left side is no longer green:
+
+You can also restart your virtual machine here at any time. Please make sure your virtual machine is turned ON (RUNNING) at the due date and submit the IP for your application (see Submission section)
+
+ 
+
+Submission
+
+Please ensure that your servers are online when you submit your assignment. To test your server, we will go to the external IP of your application. We should then be able to run your application.
+
+For Rohit and Brij (our T.A.s) to access your project, please do the following:
+
+Submit a text file containing your Google ID and the URL of your application (the external IP) to Canvas.
+
+Please submit the zipped code of your project to Canvas (after deleting any node_modules folder).
