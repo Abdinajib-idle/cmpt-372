@@ -18,10 +18,14 @@ export default function NewRecipes() {
        setIngr("");
       }
       const handleSave = (e) => {
-        const savedRecipes = {
-
-        }
+        const recipe = {
+            recName: recName,
+            dir:dir,
+            ingr:ingr,
+        };
+        localStorage.setItem(recName, JSON.stringify(recipe));
       }
+
     return (
         <div className = "container" style={{ padding: '20px', border: '1px solid #eee', width:"fit-content" }}>
             <h3>New Recipe</h3>
