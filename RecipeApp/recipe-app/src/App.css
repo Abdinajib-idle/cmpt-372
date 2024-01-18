@@ -1,11 +1,22 @@
 /* .App {
   text-align: center;
 } */
+.header-item {
+  font-size: xx-large;
+  margin-left: 20px;
+}
+.new-recipe {
+  font-size: x-large;
+}
+.span-container {
+  margin-left: 10px;
+}
 
 .App-logo {
   height: 40vmin;
   pointer-events: none;
 }
+
 
 @media (prefers-reduced-motion: no-preference) {
   .App-logo {
@@ -38,4 +49,9 @@
 }
 .container btns {
   display: flex;
+  flex-direction: column;
+
+}
+.input {
+  border-color: #eee;
 }

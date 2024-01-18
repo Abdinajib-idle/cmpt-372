@@ -1,12 +1,13 @@
 import './App.css';
 import './NewRecipes'
 import NewRecipes from './NewRecipes';
+import RecipeList from './RecipeList';
 
 function App() {
   return (
     <div className="App">
-    <h1>Recipe App</h1>
-   <NewRecipes/>
+    <p className='header-item'>Recipe App</p>
+   <RecipeList/>
     </div>
   );
 }

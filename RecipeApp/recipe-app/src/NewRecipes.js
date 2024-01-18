@@ -1,10 +1,13 @@
 import { React, useState } from 'react';
 import './App.css';
+import RecipeList from './RecipeList';
+import { message } from 'antd';
 
 export default function NewRecipes() {
     const [recName,setRecName] = useState("");
     const [ingr, setIngr] = useState("");
     const [dir, setDir] = useState("");
+    
     const saveHandler = (e) => {
        
         // e.preventDefault();
@@ -18,17 +21,29 @@ export default function NewRecipes() {
        setIngr("");
       }
       const handleSave = (e) => {
+        if(recName == "" || dir == "" ||ingr == ""){
+            message.error("Can't save empty feilds");
+            return 0;
+        }
         const recipe = {
             recName: recName,
             dir:dir,
             ingr:ingr,
         };
         localStorage.setItem(recName, JSON.stringify(recipe));
+        resetForm();
       }
+      const btnStyles={
+        backgroundColor: '#1677ff',
+        color: '#fff',
+        padding: '10px 80px',
+        border: 'none',
+        borderRadius: '8px',
+    }
 
     return (
-        <div className = "container" style={{ padding: '20px', border: '1px solid #eee', width:"fit-content" }}>
-            <h3>New Recipe</h3>
+        <div className = "container" style={{margin:"20px", padding: '20px',backgroundColor:"#fff", border: '1.5px solid #f2f2f2', width:"fit-content" }}>
+            <p className='new-recipe'>New Recipe</p>
             <form onSubmit={handleForm} style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
                 <label htmlFor="recipeName">Recipe Name</label>
                 <br/>
@@ -37,7 +52,7 @@ export default function NewRecipes() {
                 onChange={(e) => setRecName(e.target.value)} 
                 type="text" 
                 id="recipeName" 
-                style={{ width: '412px'}} />
+                style={{ width: '412px', boder:"5px solid #f2f2f2"}} />
                 <p>Ingredients</p>
                 <textarea
                 value={ingr}
@@ -51,32 +66,23 @@ export default function NewRecipes() {
                     style={{ width: '414px', height: '232px' }}
                 />
                 <br />
-                <div style = {{display:'flex', flexDirection:'column',alignItems:'center'}}>
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%' }}>
                 <button
-                    style={{
-                        backgroundColor: '#1677ff',
-                        color: '#fff',
-                        padding: '10px 80px',
-                        border: 'none',
-                        borderRadius: '8px',
-                        // margin: '10px 0', 
-                    }}
+                    style={btnStyles}
                     onClick = {resetForm}
                 >
                     RESET
                 </button>
                 <br />
                 <button
-                    style={{
-                        backgroundColor: '#1677ff',
-                        color: '#fff',
-                        padding: '10px 80px',
-                        border: 'none',
-                        borderRadius: '8px',
-                    }}
+                    style={btnStyles}
                     onClick = {handleSave}
                 >
                     SAVE
+                </button>
+                <br/>
+                <button style = {btnStyles} onClick = {() => {<RecipeList/>}}>
+                    Load
                 </button>
                 </div>
             </form>
