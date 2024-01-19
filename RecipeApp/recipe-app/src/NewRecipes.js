@@ -21,18 +21,30 @@ export default function NewRecipes() {
        setIngr("");
       }
       const handleSave = (e) => {
-        if(recName == "" || dir == "" ||ingr == ""){
-            message.error("Can't save empty feilds");
-            return 0;
+        if (recName === "" || dir === "" || ingr === "") {
+            message.error("Can't save empty fields");
+            return;
         }
+
+        const lastModified = new Date().toLocaleString('en-US', {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: true
+        });
+
         const recipe = {
             recName: recName,
-            dir:dir,
-            ingr:ingr,
+            dir: dir,
+            ingr: ingr,
+            lastModified: lastModified
         };
+
         localStorage.setItem(recName, JSON.stringify(recipe));
         resetForm();
-      }
+    };
       const btnStyles={
         backgroundColor: '#1677ff',
         color: '#fff',

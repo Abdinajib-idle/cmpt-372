@@ -16,17 +16,30 @@ export default function RecipeList() {
     const closeModal = () => {
         setModal2Open(false);
     };
-    const handleOutsideClick = (e) => {
-        if (e.target === e.currentTarget) {
-            closeModal();
-        }
-    };
+    const CloseButton = ({ onClick }) => (
+        <button onClick={onClick} style={closeButtonStyle}>
+          &times;
+        </button>
+      );
+      const closeButtonStyle = {
+        position: 'absolute',
+        top: '22px',
+        padding:"3px 9px",
+        right: '32px',
+        border: "none",
+        borderRadius:"60%",
+        background: 'none',
+        fontSize: '25px',
+        color: '#FFFFFF',
+        backgroundColor:"#03549A",
+        cursor: 'pointer',
+      };
     return (
         <div>
             <table style={tableStyle}>
                 <thead>
                     <tr style={tableRowStyle}>
-                        <th style={tableCellStyle}>Saved Recipes</th>
+                    <th style={{ ...tableCellStyle, color: '#333' }}>Saved Recipes</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -42,8 +55,10 @@ export default function RecipeList() {
             </table>
 
             {modal2Open && (
-                <div style={modalStyle} onClick={handleOutsideClick}>
-                    <div style={modalContentStyle}>
+                    <div style={modalContentStyle} onClick={e => e.stopPropagation()}>
+                    {/* <div style={modalContentStyle}> */}
+                    <CloseButton onClick={closeModal} />
+
                         {selectedRecipe && (
                             <div>
                                 <p><strong>{selectedRecipe.recName}</strong></p>
@@ -68,7 +83,7 @@ export default function RecipeList() {
 
                             </div>
                         )}
-                    </div>
+                    {/* </div> */}
                 </div>
             )}
         </div>
@@ -89,18 +104,20 @@ const modalStyle = {
 };
 
 const modalContentStyle = {
-    backgroundColor: 'rgba(255, 255, 255, 0.2)', 
+    backgroundColor: "#F0EEEF",
+    boxShadow: "0 0 10px rgba(0,0,0,0.25)", 
     backdropFilter: 'blur(10px) saturate(180%)', 
     WebkitBackdropFilter: 'blur(10px) saturate(180%)', 
     borderRadius: '12px',
     border: '1px solid rgba(255, 255, 255, 0.25)', 
     padding: '29px',
-    width: '500px', 
+    width: '400px', 
     maxWidth: '500px', 
     margin: '20px', 
     boxSizing: 'border-box', 
     overflowY: 'auto', 
-    position: 'relative', 
+    position: 'relative',
+    color:"#202529", 
 };
 const tableStyle = {
     width: '90%',
@@ -128,4 +145,6 @@ const tableRowHoverStyle = {
 const tableCellStyle = {
     padding: '10px',
     textAlign: 'left',
+    color:"#0E6EFD",
+    textDecoration: 'underline',
 };
