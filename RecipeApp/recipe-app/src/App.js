@@ -1,14 +1,15 @@
-import './App.css';
-import './NewRecipes'
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import NewRecipes from './NewRecipes';
 import RecipeList from './RecipeList';
 
 function App() {
   return (
-    <div className="App">
-    <p className='header-item'>Recipe App</p>
-   <RecipeList/>
-    </div>
+    <Router>
+      <Routes>
+        <Route path="/" element={<NewRecipes />} />
+        <Route path="/recipes" element={<RecipeList />} />
+      </Routes>
+    </Router>
   );
 }
 

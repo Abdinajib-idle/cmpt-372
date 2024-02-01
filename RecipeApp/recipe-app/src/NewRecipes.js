@@ -2,6 +2,7 @@ import { React, useState } from 'react';
 import './App.css';
 import RecipeList from './RecipeList';
 import { message } from 'antd';
+import { Link } from 'react-router-dom';
 
 export default function NewRecipes() {
     const [recName,setRecName] = useState("");
@@ -93,9 +94,10 @@ export default function NewRecipes() {
                     SAVE
                 </button>
                 <br/>
-                <button style = {btnStyles} onClick = {() => {<RecipeList/>}}>
-                    Load
-                </button>
+<button style = {btnStyles}>
+  <Link to="/recipes" style={{ color: 'inherit', textDecoration: 'none' }}>Load</Link>
+</button>
+
                 </div>
             </form>
         </div>
