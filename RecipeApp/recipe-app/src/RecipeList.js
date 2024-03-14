@@ -1,145 +1,153 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { message } from 'antd';
 import './App.css';
-import { Link } from 'react-router-dom';
 
 export default function RecipeList() {
-    const [modal2Open, setModal2Open] = useState(false);
+    const [recipes, setRecipes] = useState([]);
     const [selectedRecipe, setSelectedRecipe] = useState(null);
+    const navigate = useNavigate();
 
-    const recipesKeys = Object.keys(localStorage).filter(key => !key.startsWith('amplitude_'));
-    const showModal = (key) => {
-        const recipe = JSON.parse(localStorage.getItem(key));
+    useEffect(() => {
+        const fetchRecipes = async () => {
+            try {
+                const response = await fetch('/api/recipes');
+                if (!response.ok) {
+                    throw new Error('Failed to fetch recipes');
+                }
+                const data = await response.json();
+                setRecipes(data); 
+                console.log("recipe Data: ", data);
+            } catch (error) {
+                console.error(`Fetch error: ${error.message}`);
+                message.error(`Error: ${error.message}`);
+            }
+        };
+        
+        fetchRecipes();
+        window.addEventListener('focus', fetchRecipes);
+        return () => window.removeEventListener('focus', fetchRecipes);
+    }, []);
+
+    const deleteRecipe = async (id) => {
+        try {
+            const response = await fetch(`/api/recipes/${id}`, {
+                method: 'DELETE',
+            });
+            if (!response.ok) {
+                throw new Error('Failed to delete recipe');
+            }
+            message.success('Recipe deleted successfully');
+            setRecipes(prevRecipes => prevRecipes.filter(recipe => recipe.id !== id));
+        } catch (error) {
+            console.error(`Delete error: ${error.message}`);
+            message.error(`Error: ${error.message}`);
+        }
+    };
+
+    const editRecipe = (recipe) => {
+        console.log("edit recipe:", recipe)
+        navigate(`/edit/${recipe.id}`, { state: { recipe } });
+    };
+
+    const viewRecipe = (recipe) => {
+        console.log("selected Recipe: ", recipe);
         setSelectedRecipe(recipe);
-        setModal2Open(true);
     };
 
     const closeModal = () => {
-        setModal2Open(false);
-    };
-    const CloseButton = ({ onClick }) => (
-        <button onClick={onClick} style={closeButtonStyle}>
-            &times;
-        </button>
-    );
-
-    // Styles
-    const closeButtonStyle = {
-        position: 'absolute',
-        top: '22px',
-        padding: "3px 9px",
-        right: '32px',
-        border: "none",
-        borderRadius: "60%",
-        background: 'none',
-        fontSize: '25px',
-        color: '#FFFFFF',
-        backgroundColor: "#03549A",
-        cursor: 'pointer',
+        setSelectedRecipe(null);
     };
 
     return (
         <div>
-            <div className='btnContainer' style={{display: "flex", justifyContent: "center", margin: "12px"}}>
-                <button style={btnStyles}>
-                    <Link to="/" style={{ color: 'inherit', textDecoration: 'none' }}>Back to New Recipe</Link>
-                </button>
+            <div className='btnContainer' style={{ display: "flex", justifyContent: "center", margin: "20px" }}>
+                <Link to="/new" style={btnStyles}>Add New Recipe</Link>
             </div>
 
-            {recipesKeys.length > 0 ? (
+            {recipes.length > 0 ? (
                 <table style={tableStyle}>
                     <thead>
-                        <tr style={tableRowStyle}>
-                            <th style={{ ...tableCellStyle, color: '#333' }}>Saved Recipes</th>
+                        <tr>
+                            <th>Recipe Title</th>
+                            <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {recipesKeys.map((key) => {
-                            const recipe = JSON.parse(localStorage.getItem(key));
-                            return (
-                                <tr style={tableRowStyle} key={key} onClick={() => showModal(key)}>
-                                    <td style={tableCellStyle}>{recipe.recName}</td>
-                                </tr>
-                            );
-                        })}
+                        {recipes.map((recipe) => (
+                            <tr key={recipe.id}>
+                                <td onClick={() => viewRecipe(recipe)} style={{ cursor: 'pointer' }}>{recipe.title}</td>
+                                <td>
+                                    <button onClick={() => editRecipe(recipe)} style={actionButtonStyle}>Edit</button>
+                                    <button onClick={() => deleteRecipe(recipe.id)} style={actionButtonStyle}>Delete</button>
+                                </td>
+                            </tr>
+                        ))}
                     </tbody>
                 </table>
             ) : (
                 <div style={{ textAlign: 'center', marginTop: '20px' }}>No saved recipes</div>
             )}
 
-            {modal2Open && (
-                <div style={modalContentStyle} onClick={e => e.stopPropagation()}>
-                    <CloseButton onClick={closeModal} />
-                    {selectedRecipe && (
-                        <div>
-                            <p><strong>{selectedRecipe.recName}</strong></p>
-                            <>Ingredients:
-                                <span className='span-container'>
-                                    <ol>
-                                        {selectedRecipe.ingr.split('\n').map((ingredient, index) => (
-                                            <li key={index}>{ingredient.replace(/ - /g, '').trim()}</li>
-                                        ))}
-                                    </ol>
-                                </span>
-                            </>
-                            <>Directions:
-                                <span className='span-container'>
-                                    <ol>
-                                        {selectedRecipe.dir.split('\n').map((direction, index) => (
-                                            <li key={index}>{direction.replace(/ \* /g, '').trim()}</li>
-                                        ))}
-                                    </ol>
-                                </span>
-                            </>
-                        </div>
-                    )}
+            {selectedRecipe && (
+                <div className="modal" onClick={closeModal}>
+                    <div className="modal-content" onClick={e => e.stopPropagation()}>
+                        <span className="close" onClick={closeModal}>&times;</span>
+                        <h2>{selectedRecipe.title}</h2>
+                        <p><strong>Last Modified:</strong> {new Date(selectedRecipe.time_last_modified).toLocaleString()}</p>
+                        <h3>Ingredients:</h3>
+                        <ul>
+                            {selectedRecipe.ingredients.split('\n').map((ingredient, index) => (
+                                <li key={index}>{ingredient}</li>
+                            ))}
+                        </ul>
+                        <h3>Directions:</h3>
+                        <pre>{selectedRecipe.recipe_instructions}</pre>
+                    </div>
                 </div>
             )}
         </div>
     );
 }
 
-// Extra styles
+function parseIngredientsForEdit(ingredientsString) {
+    try {
+      const correctedString = ingredientsString
+        .replace(/\\|\{|\}|\"/g, '') // Remove extra escape characters and braces
+        .replace(/name:/g, '') // Remove the 'name:' prefix
+        .split(',') // Split the string by comma
+        .join('\n'); // Join the array elements with newlines to create a multi-line string for the textarea
+  
+      return correctedString;
+    } catch (error) {
+      console.error('Error parsing ingredients:', error);
+      return ''; // Return an empty string in case of an error
+    }
+  }
+  
+  
+// Styles
 const btnStyles = {
     backgroundColor: '#1677ff',
     color: '#fff',
-    padding: '10px 80px',
+    padding: '10px 20px',
     border: 'none',
-    borderRadius: '8px',
+    borderRadius: '4px',
+    textDecoration: 'none',
+    cursor: 'pointer',
 };
 
-const modalContentStyle = {
-    marginTop: "-100px",
-    marginLeft: "200px",
-    backgroundColor: "#F0EEEF",
-    boxShadow: "0 0 10px rgba(0,0,0,0.25)",
-    backdropFilter: 'blur(10px) saturate(180%)',
-    WebkitBackdropFilter: 'blur(10px) saturate(180%)',
-    borderRadius: '12px',
-    border: '1px solid rgba(255, 255, 255, 0.25)',
-    padding: '29px',
-    width: '400px',
-    maxWidth: '500px',
-    overflowY: 'auto',
-    position: 'relative',
-    color: "#202529",
+const actionButtonStyle = {
+    ...btnStyles,
+    padding: '5px 10px',
+    margin: '5px',
+    fontSize: '14px',
 };
 
 const tableStyle = {
-    width: '90%',
-    backgroundColor: "#fff",
+    width: '80%',
+    margin: '0 auto',
     borderCollapse: 'collapse',
-    boxShadow: '0 4px 8px 0 rgba(0, 0, 0, 0.2)',
-    marginLeft: '20px',
 };
 
-const tableRowStyle = {
-    borderBottom: '1px solid #ddd',
-};
 
-const tableCellStyle = {
-    padding: '10px',
-    textAlign: 'left',
-    color: "#0E6EFD",
-    textDecoration: 'underline',
-};

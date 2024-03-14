@@ -55,3 +55,142 @@
 .input {
   border-color: #eee;
 }
+.new-recipe-container {
+  background-color: #fff;
+  padding: 20px;
+  margin: 20px auto;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  max-width: 500px; /* or your preferred width */
+}
+
+.new-recipe-container h2 {
+  color: #333;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.new-recipe-container label {
+  display: block;
+  margin-bottom: 5px;
+}
+
+.new-recipe-container input,
+.new-recipe-container textarea {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 15px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  box-sizing: border-box; 
+}
+
+.new-recipe-container textarea {
+  height: 100px; /* or your preferred height */
+}
+
+.submit-btn,
+.back-btn {
+  display: inline-block;
+  padding: 10px 20px;
+  margin: 5px 0;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px; 
+  transition: background-color 0.3s ease;
+}
+
+.submit-btn {
+  background-color: #5cb85c;
+  color: #fff;
+}
+
+.submit-btn:hover {
+  background-color: #4cae4c;
+}
+
+.back-btn {
+  background-color: #f0ad4e;
+  color: #fff;
+  margin-left: 10px; /* Spacing between buttons */
+}
+
+.back-btn:hover {
+  background-color: #ec971f;
+}
+
+/* Input and Textarea focus state */
+.new-recipe-container input:focus,
+.new-recipe-container textarea:focus {
+  border-color: #5cb85c; /* Highlight color when the element is focused */
+  outline: none; /* Removes the default focus outline */
+  box-shadow: 0 0 0 3px rgba(92, 184, 92, 0.5); /* Adds a 'glow' effect around the field */
+}
+
+/* Button hover and active states */
+.submit-btn:hover,
+.back-btn:hover {
+  opacity: 0.9; /* Slightly reduce the opacity on hover */
+}
+
+.submit-btn:active,
+.back-btn:active {
+  transform: scale(0.98); /* Slightly shrink buttons when clicked */
+}
+
+/* Button focus states */
+.submit-btn:focus,
+.back-btn:focus {
+  outline: none; 
+  box-shadow: 0 0 0 3px rgba(92, 184, 92, 0.5); /* Match the focus state of inputs */
+}
+.modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  z-index: 1000; 
+}
+
+.modal-content {
+  position: relative;
+}
+
+.close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  cursor: pointer;
+  font-size: 1.5rem;
+}
+table {
+  width: 80%;
+  margin: 20px auto;
+  border-collapse: collapse;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+table th,
+table td {
+  text-align: left;
+  padding: 12px;
+  border-bottom: 1px solid #ddd; /* light grey line for separation */
+}
+
+table th {
+  background-color: #f4f4f4; /* Light grey background */
+  font-weight: bold;
+}
+
+table tr:nth-child(even) {
+  background-color: #f9f9f9; /* Zebra-striping for rows */
+}
+
+table tr:hover {
+  background-color: #f1f1f1; /* Slight color change on hover */
+}

@@ -6,8 +6,9 @@ function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<NewRecipes />} />
-        <Route path="/recipes" element={<RecipeList />} />
+        <Route path="/" element={<RecipeList />} />
+        <Route path="/new" element={<NewRecipes />} />
+        <Route path="/edit/:id" element={<NewRecipes />} />
       </Routes>
     </Router>
   );

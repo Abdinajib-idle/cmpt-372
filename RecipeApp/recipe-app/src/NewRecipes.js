@@ -1,105 +1,103 @@
-import { React, useState } from 'react';
-import './App.css';
-import RecipeList from './RecipeList';
+import React, { useState, useEffect } from 'react';
+import { useLocation, useNavigate, Link } from 'react-router-dom';
 import { message } from 'antd';
-import { Link } from 'react-router-dom';
+import './App.css';
 
 export default function NewRecipes() {
-    const [recName,setRecName] = useState("");
-    const [ingr, setIngr] = useState("");
-    const [dir, setDir] = useState("");
-    
-    const saveHandler = (e) => {
-       
-        // e.preventDefault();
-      };
-      const handleForm = (e) => {
-        e.preventDefault();
-      };
-      const resetForm = (e) => {
-       setRecName(""); 
-       setDir(""); 
-       setIngr("");
-      }
-      const handleSave = (e) => {
-        if (recName === "" || dir === "" || ingr === "") {
-            message.error("Can't save empty fields");
-            return;
-        }
+  const location = useLocation();
+  const navigate = useNavigate();
+  // Unified state object for the recipe
+  const [recipe, setRecipe] = useState({
+    id: null,
+    title: '',
+    ingredients: '',
+    recipe_instructions: ''
+  });
 
-        const lastModified = new Date().toLocaleString('en-US', {
-            year: 'numeric',
-            month: '2-digit',
-            day: '2-digit',
-            hour: '2-digit',
-            minute: '2-digit',
-            hour12: true
-        });
-
-        const recipe = {
-            recName: recName,
-            dir: dir,
-            ingr: ingr,
-            lastModified: lastModified
-        };
-
-        localStorage.setItem(recName, JSON.stringify(recipe));
-        resetForm();
-    };
-      const btnStyles={
-        backgroundColor: '#1677ff',
-        color: '#fff',
-        padding: '10px 80px',
-        border: 'none',
-        borderRadius: '8px',
+  // Check if we are editing an existing recipe and pre-fill the form
+  useEffect(() => {
+    if (location.state?.recipe) {
+      console.log("from the useEffect:", location.state.recipe)
+      const { id, title, ingredients, recipe_instructions } = location.state.recipe;
+      setRecipe({
+        id,
+        title,
+        ingredients, 
+        recipe_instructions
+      });
     }
+  }, [location.state]);
 
-    return (
-        <div className = "container" style={{margin:"20px", padding: '20px',backgroundColor:"#fff", border: '1.5px solid #f2f2f2', width:"fit-content" }}>
-            <p className='new-recipe'>New Recipe</p>
-            <form onSubmit={handleForm} style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
-                <label htmlFor="recipeName">Recipe Name</label>
-                <br/>
-                <input
-                value={recName}
-                onChange={(e) => setRecName(e.target.value)} 
-                type="text" 
-                id="recipeName" 
-                style={{ width: '412px', boder:"5px solid #f2f2f2"}} />
-                <p>Ingredients</p>
-                <textarea
-                value={ingr}
-                onChange={(e) => setIngr(e.target.value)}
-                    style={{ width: '412px', height: '132px' }}
-                />
-                <p>Directions</p>
-                <textarea
-                    value = {dir}
-                    onChange={(e) => setDir(e.target.value)}
-                    style={{ width: '414px', height: '232px' }}
-                />
-                <br />
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%' }}>
-                <button
-                    style={btnStyles}
-                    onClick = {resetForm}
-                >
-                    RESET
-                </button>
-                <br />
-                <button
-                    style={btnStyles}
-                    onClick = {handleSave}
-                >
-                    SAVE
-                </button>
-                <br/>
-<button style = {btnStyles}>
-  <Link to="/recipes" style={{ color: 'inherit', textDecoration: 'none' }}>Load</Link>
-</button>
 
-                </div>
-            </form>
-        </div>
-    );
+  const handleSave = async (e) => {
+    e.preventDefault();
+
+    const payload = {
+      title: recipe.title,
+      recipe_instructions: recipe.recipe_instructions,
+      ingredients: recipe.ingredients 
+    };
+    console.log("Payload being sent:", payload);
+
+
+    const url = recipe.id ? `/api/recipes/${recipe.id}` : '/api/recipes';
+    const method = recipe.id ? 'PUT' : 'POST';
+
+    try {
+      const response = await fetch(url, {
+        method: method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+
+      if (!response.ok) {
+        throw new Error(await response.text());
+      }
+
+      const responseData = await response.json();
+      message.success(`Recipe ${recipe.id ? 'updated' : 'saved'} successfully`);
+      navigate('/');
+    } catch (error) {
+      console.error('Saving error:', error);
+      message.error(`Error: ${error.message}`);
+    }
+  };
+
+
+  return (
+    <div className="new-recipe-container">
+      <h2>{recipe.id ? 'Edit Recipe' : 'New Recipe'}</h2>
+      <form onSubmit={handleSave}>
+        <label htmlFor="recipeName">Recipe Name</label>
+        <input
+          value={recipe.title}
+          onChange={(e) => setRecipe({ ...recipe, title: e.target.value })}
+          type="text"
+          id="recipeName"
+          className="form-input"
+          required
+        />
+        <label htmlFor="ingredients">Ingredients (one per line)</label>
+        <textarea
+          value={recipe.ingredients}
+          onChange={(e) => setRecipe({ ...recipe, ingredients: e.target.value })}
+          id="ingredients"
+          className="form-textarea"
+          required
+        />
+
+        <label htmlFor="directions">Directions</label>
+        <textarea
+          value={recipe.recipe_instructions}
+          onChange={(e) => setRecipe({ ...recipe, recipe_instructions: e.target.value })}
+          id="directions"
+          className="form-textarea"
+          required
+        />
+
+        <button type="submit" className="submit-btn">Save</button>
+        <Link to="/" className="back-btn">Back to Recipes List</Link>
+      </form>
+    </div>
+  );
 }
